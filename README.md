@@ -102,6 +102,29 @@ You speak → Whisper transcribes → LLM cleans up → Text is pasted
 
 ---
 
+## Version History
+
+### v1.1.0
+- In-app auto-updates — download and install updates without leaving the app
+- Recording sounds now play from the in-app record button (not just hotkeys)
+- Per-user data isolation — each account gets separate history, stats, and settings
+- Fixed API key leaking between user accounts
+- Removed "No speech detected" toast overlap
+
+### v1.0.0
+- Initial release
+- Cloud transcription (Groq, OpenAI, Deepgram)
+- Local Whisper support (offline mode)
+- AI-powered text cleanup (casual, professional, minimal)
+- Dual hotkey modes: hold-to-dictate + toggle hands-free
+- Word count tracking, daily goals, streaks
+- Meeting notes mode
+- Personal dictionary
+- User accounts with Supabase auth
+- Check for updates
+
+---
+
 <p align="center">
   Built with ❤️ by <a href="https://github.com/brodahayo">brodahayo</a>
 </p>
