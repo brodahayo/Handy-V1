@@ -1,0 +1,11 @@
+rumps
+pynput
+pyaudio
+numpy
+requests
+pyperclip
+pyobjc-core
+pyobjc-framework-Cocoa
+pyobjc-framework-Quartz
+pywebview
+py2app

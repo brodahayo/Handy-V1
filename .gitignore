@@ -1,0 +1,22 @@
+# Build artifacts
+build/
+dist/
+*.egg-info/
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.DS_Store
+*.icns
+
+# Environment
+.env
+*.env
+
+# IDE
+.vscode/
+.idea/
+
+# Sounds cache (generated at runtime)
+sounds/*.wav
