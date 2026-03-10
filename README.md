@@ -102,54 +102,6 @@ You speak → Whisper transcribes → LLM cleans up → Text is pasted
 
 ---
 
-## For Developers
-
-### Running from source
-
-```bash
-# Install dependencies
-brew install portaudio
-pip3 install -r requirements.txt
-
-# Run
-python3 app.py
-```
-
-### Building the app
-
-```bash
-# Build .app bundle and DMG
-chmod +x build_dmg.sh
-./build_dmg.sh
-```
-
-### Releasing a new version
-
-```bash
-# 1. Update version in version.py and setup_app.py
-# 2. Commit and tag
-git add -A && git commit -m "Release v1.1.0"
-git tag v1.1.0
-git push origin main --tags
-# 3. GitHub Actions builds the DMG and creates a release automatically
-```
-
----
-
-## Tech Stack
-
-| Component | Technology |
-|-----------|-----------|
-| App framework | Python + pywebview + rumps (menu bar) |
-| UI | HTML/CSS/JS (single-file, macOS-native aesthetic) |
-| Speech-to-text | Whisper (via Groq/OpenAI/Deepgram or local faster-whisper) |
-| Text cleanup | LLM (Llama 3.3 70B via Groq, or GPT via OpenAI) |
-| Recording overlay | Native macOS NSWindow + NSView (PyObjC) |
-| Auth | Supabase (email/password + Google OAuth) |
-| Data storage | Local JSON files, per-user isolation |
-
----
-
 <p align="center">
   Built with ❤️ by <a href="https://github.com/brodahayo">brodahayo</a>
 </p>
