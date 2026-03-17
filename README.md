@@ -34,20 +34,8 @@
 
 ## Install
 
-### Homebrew (recommended)
-
-```bash
-brew tap brodahayo/tap
-brew install --cask handy
-```
-
-### Manual download
-
 1. **[Download Handy.dmg](https://github.com/brodahayo/Handy-V1/releases/latest/download/Handy.dmg)**
 2. Open the DMG and drag **Handy** to **Applications**
-
-### Then
-
 3. Launch Handy and follow the setup wizard
 4. Grant microphone and accessibility permissions when prompted
 
