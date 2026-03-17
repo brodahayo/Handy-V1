@@ -39,7 +39,12 @@
 3. Launch Handy and follow the setup wizard
 4. Grant microphone and accessibility permissions when prompted
 
-> **First launch**: Right-click → Open to bypass Gatekeeper (the app isn't notarized yet).
+> **First launch**: macOS will block the app since it isn't notarized. To open it:
+> 1. Go to **System Settings → Privacy & Security**
+> 2. Scroll down — you'll see "Handy was blocked"
+> 3. Click **Open Anyway**
+>
+> Or: right-click the app → **Open** → click **Open** in the dialog.
 
 ---
 
