@@ -5,126 +5,61 @@
 <h1 align="center">Handy</h1>
 
 <p align="center">
-  <strong>Speak naturally. Get clean text. Anywhere on your Mac.</strong>
+  <strong>Your voice, instantly typed.</strong>
 </p>
 
 <p align="center">
-  Handy is a macOS menu bar app that turns your voice into polished, ready-to-use text — pasted directly where your cursor is. No copying, no switching windows, no friction.
+  Hold a key, speak, and clean text appears wherever your cursor is — any app, instantly.
 </p>
 
 <p align="center">
-  <a href="https://github.com/brodahayo/Handy/releases/latest/download/Handy.dmg">
+  <a href="https://github.com/brodahayo/Handy-V1/releases/latest/download/Handy.dmg">
     <img src="https://img.shields.io/badge/Download-Handy.dmg-007AFF?style=for-the-badge&logo=apple&logoColor=white" alt="Download">
   </a>
 </p>
 
 ---
 
-## What is Handy?
+## What it does
 
-Handy sits quietly in your menu bar and listens when you need it. Hold a key, speak, release — your words appear as clean, formatted text wherever you're typing. Emails, Slack messages, code comments, documents. It just works.
-
-Think of it as your personal stenographer that:
-- **Hears** what you say (via Whisper speech-to-text)
-- **Cleans** it up with AI (fixes grammar, removes filler words)
-- **Pastes** the result right where your cursor is
-
-No more typing the same long email. No more struggling to articulate a complex thought in text. Just speak it.
-
----
-
-## Quick Tour
-
-### Home
-Your command center. See today's word count, track your daily goal, and browse your transcription history at a glance.
-
-### Transcribe
-The core of Handy. Hit your hotkey, speak, and watch your words get transcribed and cleaned up in real-time. Two modes:
-- **Quick Dictation** — Hold a key (like `Fn`) to record, release to transcribe
-- **Hands-Free Toggle** — Press a key combo (like `⌥V`) to start/stop recording
-
-### Meeting Notes
-Dedicated space for capturing meeting notes by voice. Record segments, review, edit, and export — all without leaving the app.
-
-### Dictionary
-Add custom words, names, and terminology that the AI should recognize and preserve. Technical jargon, product names, people's names — Handy learns your vocabulary.
-
-### Settings
-Fine-tune everything:
-- **Cloud provider** — Groq (free), OpenAI, or Deepgram
-- **Cleanup style** — Casual, Professional, or Minimal
-- **Hotkeys** — Customize your recording triggers
-- **Overlay** — Choose the recording indicator style and position
-- **Sounds** — Pick your start/stop recording sound effects
-- **Local models** — Download Whisper models for offline use
+- **Talk, don't type** — you speak 3x faster than you type. Hold Fn, say what you mean, release. Done.
+- **AI cleanup** — raw speech becomes clean, punctuated text. No more "um" and "like."
+- **Works everywhere** — dictate into any app. Slack, Mail, Notes, your browser — wherever your cursor is.
+- **Context-aware** — detects which app you're in and adjusts the tone. Professional for email, casual for chat.
+- **Meeting notes** — tap record, speak naturally, get clean notes appended automatically.
+- **Your personal dictionary** — tracks your most-used words across all transcriptions.
+- **Beautiful** — dark, minimal, Apple-grade design with fluid wave visualizers and animated overlays.
 
 ---
 
-## Installation
+## Install
 
-1. **Download** [`Handy.dmg`](https://github.com/brodahayo/Handy/releases/latest/download/Handy.dmg)
-2. **Open** the DMG and drag Handy to your Applications folder
-3. **Launch** Handy from Applications
-4. **First launch**: Right-click the app → Open (to bypass Gatekeeper since the app isn't notarized yet)
-5. **Grant permissions** when prompted:
-   - **Microphone** — so Handy can hear you
-   - **Accessibility** — so Handy can paste text into your apps
+1. **[Download Handy.dmg](https://github.com/brodahayo/Handy-V1/releases/latest/download/Handy.dmg)**
+2. Open the DMG and drag **Handy** to **Applications**
+3. Launch Handy and follow the setup wizard
+4. Grant microphone and accessibility permissions when prompted
 
-## Setup
-
-1. Create a free account or sign in
-2. Go to **Settings** and enter your API key:
-   - **Groq** (recommended, free): Get a key at [console.groq.com](https://console.groq.com)
-   - **OpenAI**: Use your existing OpenAI key
-   - **Deepgram**: Get a key at [deepgram.com](https://deepgram.com)
-3. Start talking!
+> **First launch**: Right-click → Open to bypass Gatekeeper (the app isn't notarized yet).
 
 ---
 
-## How It Works
+## Quick start
 
-```
-You speak → Whisper transcribes → LLM cleans up → Text is pasted
-            (cloud or local)      (grammar, filler   (pbcopy + Cmd+V)
-                                   words, formatting)
-```
+1. **Set your API key** — go to Models → paste your Groq, OpenAI, or Deepgram key
+2. **Hold Fn** — start speaking
+3. **Release Fn** — text appears where your cursor is
 
-**Cloud mode** sends audio to your chosen provider for transcription. **Local mode** runs Whisper directly on your Mac — fully offline, no API key needed.
+That's it.
 
 ---
 
-## System Requirements
+## Requirements
 
-- macOS 12.0 (Monterey) or later
-- Microphone access
-- Accessibility permission
-- Internet connection (for cloud transcription) or downloaded local model (for offline)
-
----
-
-## Version History
-
-### v1.1.0
-- In-app auto-updates — download and install updates without leaving the app
-- Recording sounds now play from the in-app record button (not just hotkeys)
-- Per-user data isolation — each account gets separate history, stats, and settings
-- Fixed API key leaking between user accounts
-- Removed "No speech detected" toast overlap
-
-### v1.0.0
-- Initial release
-- Cloud transcription (Groq, OpenAI, Deepgram)
-- Local Whisper support (offline mode)
-- AI-powered text cleanup (casual, professional, minimal)
-- Dual hotkey modes: hold-to-dictate + toggle hands-free
-- Word count tracking, daily goals, streaks
-- Meeting notes mode
-- Personal dictionary
-- User accounts with Supabase auth
-- Check for updates
+- macOS 15.0 (Sequoia) or later
+- An API key from [Groq](https://console.groq.com) (free), [OpenAI](https://platform.openai.com), or [Deepgram](https://console.deepgram.com)
 
 ---
 
 <p align="center">
-  Built with ❤️ by <a href="https://github.com/brodahayo">brodahayo</a>
+  Built by <a href="https://github.com/brodahayo">brodahayo</a>
 </p>

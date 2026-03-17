@@ -1,22 +1,18 @@
-# Build artifacts
-build/
-dist/
-*.egg-info/
-__pycache__/
-*.pyc
-*.pyo
+# Exclude everything by default
+*
 
-# macOS
+# Allow these files
+!.gitignore
+!README.md
+!assets/
+!assets/**
+!Handy.dmg
+!latest_version.json
+!.github/
+!.github/**
+
+# Always ignore
 .DS_Store
-*.icns
-
-# Environment
+*.pyc
+__pycache__/
 .env
-*.env
-
-# IDE
-.vscode/
-.idea/
-
-# Sounds cache (generated at runtime)
-sounds/*.wav
