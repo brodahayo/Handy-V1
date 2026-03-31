@@ -13,11 +13,8 @@
 !.github/
 !.github/**
 !Handy/
-!Handy/Handy/
-!Handy/Handy/Models/
-!Handy/Handy/Models/Settings.swift
-!Handy/HandyTests/
-!Handy/HandyTests/SettingsTests.swift
+!Handy/**
+Handy/1/
 
 # Always ignore
 .DS_Store
