@@ -131,4 +131,30 @@ struct AppSettings: Codable {
     var dailyGoal: Int = 500
 
     var appearanceMode: AppearanceMode = .dark
+
+    init() {}
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        hotkeyMode = try container.decodeIfPresent(HotkeyMode.self, forKey: .hotkeyMode) ?? .holdFn
+        holdKey = try container.decodeIfPresent(HoldKey.self, forKey: .holdKey) ?? .fn
+        toggleModifier = try container.decodeIfPresent(String.self, forKey: .toggleModifier) ?? "option"
+        toggleKey = try container.decodeIfPresent(String.self, forKey: .toggleKey) ?? "v"
+        holdToDictateEnabled = try container.decodeIfPresent(Bool.self, forKey: .holdToDictateEnabled) ?? true
+        toggleRecordingEnabled = try container.decodeIfPresent(Bool.self, forKey: .toggleRecordingEnabled) ?? true
+        cloudProvider = try container.decodeIfPresent(CloudProvider.self, forKey: .cloudProvider) ?? .groq
+        language = try container.decodeIfPresent(String.self, forKey: .language) ?? "auto"
+        transcriptionMode = try container.decodeIfPresent(TranscriptionMode.self, forKey: .transcriptionMode) ?? .cloud
+        localModelSize = try container.decodeIfPresent(String.self, forKey: .localModelSize) ?? "base"
+        cleanupEnabled = try container.decodeIfPresent(Bool.self, forKey: .cleanupEnabled) ?? true
+        cleanupStyle = try container.decodeIfPresent(CleanupStyle.self, forKey: .cleanupStyle) ?? .casual
+        contextAware = try container.decodeIfPresent(Bool.self, forKey: .contextAware) ?? true
+        overlayStyle = try container.decodeIfPresent(OverlayStyle.self, forKey: .overlayStyle) ?? .mini
+        overlayPosition = try container.decodeIfPresent(OverlayPosition.self, forKey: .overlayPosition) ?? .bottomCenter
+        soundEnabled = try container.decodeIfPresent(Bool.self, forKey: .soundEnabled) ?? true
+        soundPack = try container.decodeIfPresent(SoundPack.self, forKey: .soundPack) ?? .droplet
+        launchAtLogin = try container.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? false
+        dailyGoal = try container.decodeIfPresent(Int.self, forKey: .dailyGoal) ?? 500
+        appearanceMode = try container.decodeIfPresent(AppearanceMode.self, forKey: .appearanceMode) ?? .dark
+    }
 }
