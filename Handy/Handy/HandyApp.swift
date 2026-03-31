@@ -52,6 +52,8 @@ struct HandyApp: App {
                     .onChange(of: appState.settings.holdKey) { configureHotkeys() }
                     .onChange(of: appState.settings.toggleModifier) { configureHotkeys() }
                     .onChange(of: appState.settings.toggleKey) { configureHotkeys() }
+                    .onChange(of: appState.settings.holdToDictateEnabled) { configureHotkeys() }
+                    .onChange(of: appState.settings.toggleRecordingEnabled) { configureHotkeys() }
             }
         }
         .defaultSize(width: 700, height: 500)
@@ -266,7 +268,9 @@ struct HandyApp: App {
         hotkeyManager.configure(
             holdKey: appState.settings.holdKey,
             toggleModifier: appState.settings.toggleModifier,
-            toggleKey: appState.settings.toggleKey
+            toggleKey: appState.settings.toggleKey,
+            holdEnabled: appState.settings.holdToDictateEnabled,
+            toggleEnabled: appState.settings.toggleRecordingEnabled
         )
         startAccessibilityPolling()
     }
@@ -295,7 +299,9 @@ struct HandyApp: App {
                     hotkeyManager.configure(
                         holdKey: appState.settings.holdKey,
                         toggleModifier: appState.settings.toggleModifier,
-                        toggleKey: appState.settings.toggleKey
+                        toggleKey: appState.settings.toggleKey,
+                        holdEnabled: appState.settings.holdToDictateEnabled,
+                        toggleEnabled: appState.settings.toggleRecordingEnabled
                     )
                 } else if accessibilityPollCount >= 300 {
                     // Stop polling after 5 minutes to avoid running forever
