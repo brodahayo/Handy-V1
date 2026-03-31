@@ -1,21 +1,15 @@
-# macOS
+# Exclude everything by default
+*
+
+# Allow these files
+!.gitignore
+!README.md
+!assets/
+!assets/**
+!Handy.dmg
+!latest_version.json
+!.github/
+!.github/**
+
+# Always ignore
 .DS_Store
-
-# Xcode
-Handy/Handy.xcodeproj/xcuserdata/
-Handy/Handy.xcodeproj/project.xcworkspace/xcuserdata/
-xcuserdata/
-*.xcscmblueprint
-DerivedData/
-
-# Build artifacts
-build/
-dist/
-Handy/1/
-Handy/build_dmg/
-
-# Secrets
-.env
-
-# Distribution
-Handy.dmg
