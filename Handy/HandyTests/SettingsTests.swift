@@ -11,12 +11,12 @@ final class SettingsTests: XCTestCase {
         XCTAssertTrue(settings.cleanupEnabled)
         XCTAssertEqual(settings.cleanupStyle, .casual)
         XCTAssertEqual(settings.overlayStyle, .mini)
-        XCTAssertEqual(settings.overlayPosition, .topCenter)
+        XCTAssertEqual(settings.overlayPosition, .bottomCenter)
         XCTAssertTrue(settings.soundEnabled)
-        XCTAssertEqual(settings.soundPack, .woody)
+        XCTAssertEqual(settings.soundPack, .droplet)
         XCTAssertEqual(settings.language, "auto")
         XCTAssertEqual(settings.transcriptionMode, .cloud)
-        XCTAssertFalse(settings.contextAware)
+        XCTAssertTrue(settings.contextAware)
         XCTAssertFalse(settings.launchAtLogin)
     }
 
@@ -71,6 +71,6 @@ final class SettingsTests: XCTestCase {
     func testCleanupPrompts() {
         XCTAssertTrue(CleanupStyle.casual.prompt.contains("natural"))
         XCTAssertTrue(CleanupStyle.professional.prompt.contains("polished"))
-        XCTAssertTrue(CleanupStyle.minimal.prompt.lowercased().contains("preserve"))
+        XCTAssertTrue(CleanupStyle.minimal.prompt.lowercased().contains("preserving"))
     }
 }

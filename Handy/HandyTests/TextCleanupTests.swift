@@ -19,7 +19,7 @@ final class TextCleanupTests: XCTestCase {
         XCTAssertEqual(messages[0]["role"], "system")
         XCTAssertTrue(messages[0]["content"]!.contains("natural"))
         XCTAssertEqual(messages[1]["role"], "user")
-        XCTAssertEqual(messages[1]["content"], "um hello world")
+        XCTAssertEqual(messages[1]["content"], "<transcription>um hello world</transcription>")
 
         let temperature = json["temperature"] as! Double
         XCTAssertEqual(temperature, 0.3, accuracy: 0.01)
