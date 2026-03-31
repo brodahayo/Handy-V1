@@ -1,5 +1,5 @@
 {
-  "version": "2.0.1",
+  "version": "2.1.0",
   "download_url": "https://github.com/brodahayo/Handy-V1/releases/latest/download/Handy.dmg",
-  "notes": "Fix stuck spinner overlay, add Fn key watchdog, and 60s processing timeout."
+  "notes": "Add hotkey power toggle — independently enable/disable Hold to Dictate and Toggle Recording with floating badge buttons and confirmation dialogs."
 }

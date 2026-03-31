@@ -579,7 +579,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.handy.app;
 				PRODUCT_NAME = Handy;
 				SDKROOT = macosx;
@@ -617,7 +617,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.handy.app;
 				PRODUCT_NAME = Handy;
 				SDKROOT = macosx;
