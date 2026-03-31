@@ -27,6 +27,8 @@ struct SettingsPage: View {
     @State private var editingEmail: String = ""
     @State private var isEditButtonHovered = false
     @State private var showResetConfirmation = false
+    @State private var showHoldToggleAlert = false
+    @State private var showToggleRecordingAlert = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -169,85 +171,38 @@ struct SettingsPage: View {
 
             Section("Hotkeys") {
                 HStack(spacing: 10) {
-                    // Quick Dictation card
-                    VStack(spacing: 0) {
-                        Text("HOLD TO DICTATE")
-                            .font(.system(size: 10, weight: .semibold))
-                            .foregroundStyle(.quaternary)
-                            .tracking(0.8)
-                            .padding(.bottom, 12)
-
-                        Text(holdKeyLabel)
-                            .font(.system(size: 32, weight: .heavy, design: .rounded))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [.primary, .primary.opacity(0.35)],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-
-                        Picker("", selection: $appState.settings.holdKey) {
-                            Text("Fn (Globe)").tag(HoldKey.fn)
-                            Text("Option (⌥)").tag(HoldKey.option)
-                            Text("⌥⇧").tag(HoldKey.optionShift)
-                            Text("Command (⌘)").tag(HoldKey.command)
-                            Text("Control (⌃)").tag(HoldKey.control)
-                        }
-                        .labelsHidden()
-                        .controlSize(.small)
-                        .padding(.top, 8)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 20)
-                    .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .stroke(Color.primary.opacity(0.04), lineWidth: 1)
-                    )
-
-                    // Hands-Free Toggle card
-                    VStack(spacing: 0) {
-                        Text("TOGGLE RECORDING")
-                            .font(.system(size: 10, weight: .semibold))
-                            .foregroundStyle(.quaternary)
-                            .tracking(0.8)
-                            .padding(.bottom, 12)
-
-                        Text(toggleShortcutLabel)
-                            .font(.system(size: 32, weight: .heavy, design: .rounded))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [.primary, .primary.opacity(0.35)],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-
-                        HStack(spacing: 4) {
-                            Picker("", selection: $appState.settings.toggleModifier) {
-                                Text("⌥").tag("option")
-                                Text("⌘").tag("command")
-                                Text("⌃").tag("control")
-                            }
-                            .labelsHidden()
-                            .controlSize(.small)
-
-                            Text("+")
-                                .font(.caption)
+                    // Quick Dictation card — floating badge
+                    ZStack {
+                        VStack(spacing: 0) {
+                            Text("HOLD TO DICTATE")
+                                .font(.system(size: 10, weight: .semibold))
                                 .foregroundStyle(.quaternary)
+                                .tracking(0.8)
+                                .padding(.bottom, 12)
 
-                            Picker("", selection: $appState.settings.toggleKey) {
-                                Text("V").tag("v")
-                                Text("D").tag("d")
-                                Text("R").tag("r")
-                                Text("T").tag("t")
-                                Text("Space").tag("space")
+                            Text(holdKeyLabel)
+                                .font(.system(size: 32, weight: .heavy, design: .rounded))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [.primary, .primary.opacity(0.35)],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                )
+
+                            Picker("", selection: $appState.settings.holdKey) {
+                                Text("Fn (Globe)").tag(HoldKey.fn)
+                                Text("Option (⌥)").tag(HoldKey.option)
+                                Text("⌥⇧").tag(HoldKey.optionShift)
+                                Text("Command (⌘)").tag(HoldKey.command)
+                                Text("Control (⌃)").tag(HoldKey.control)
                             }
                             .labelsHidden()
                             .controlSize(.small)
+                            .padding(.top, 8)
+                            .disabled(!appState.settings.holdToDictateEnabled)
                         }
-                        .padding(.top, 8)
+                        .opacity(appState.settings.holdToDictateEnabled ? 1.0 : 0.3)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 20)
@@ -256,6 +211,145 @@ struct SettingsPage: View {
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
                             .stroke(Color.primary.opacity(0.04), lineWidth: 1)
                     )
+                    .overlay(alignment: .topTrailing) {
+                        Button {
+                            showHoldToggleAlert = true
+                        } label: {
+                            Image(systemName: "power")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(appState.settings.holdToDictateEnabled ? .white : Color(white: 0.55))
+                                .frame(width: 22, height: 22)
+                                .background(
+                                    Circle()
+                                        .fill(appState.settings.holdToDictateEnabled ? Color.accentColor : Color(white: 0.25))
+                                )
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color(white: 0.12), lineWidth: 2)
+                                )
+                                .shadow(color: .black.opacity(0.3), radius: 4, y: 2)
+                        }
+                        .buttonStyle(.plain)
+                        .offset(x: 4, y: -8)
+                        .alert(
+                            appState.settings.holdToDictateEnabled ? "Disable Hold to Dictate?" : "Enable Hold to Dictate?",
+                            isPresented: $showHoldToggleAlert
+                        ) {
+                            Button("Cancel", role: .cancel) { }
+                            if appState.settings.holdToDictateEnabled {
+                                Button("Disable", role: .destructive) {
+                                    appState.settings.holdToDictateEnabled = false
+                                }
+                            } else {
+                                Button("Enable") {
+                                    appState.settings.holdToDictateEnabled = true
+                                }
+                            }
+                        } message: {
+                            if appState.settings.holdToDictateEnabled {
+                                Text("The \(holdKeyLabel) key will stop responding until you re-enable it.")
+                            } else {
+                                Text("The \(holdKeyLabel) key will start responding to key presses again.")
+                            }
+                        }
+                    }
+
+                    // Hands-Free Toggle card — floating badge
+                    ZStack {
+                        VStack(spacing: 0) {
+                            Text("TOGGLE RECORDING")
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundStyle(.quaternary)
+                                .tracking(0.8)
+                                .padding(.bottom, 12)
+
+                            Text(toggleShortcutLabel)
+                                .font(.system(size: 32, weight: .heavy, design: .rounded))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [.primary, .primary.opacity(0.35)],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                )
+
+                            HStack(spacing: 4) {
+                                Picker("", selection: $appState.settings.toggleModifier) {
+                                    Text("⌥").tag("option")
+                                    Text("⌘").tag("command")
+                                    Text("⌃").tag("control")
+                                }
+                                .labelsHidden()
+                                .controlSize(.small)
+
+                                Text("+")
+                                    .font(.caption)
+                                    .foregroundStyle(.quaternary)
+
+                                Picker("", selection: $appState.settings.toggleKey) {
+                                    Text("V").tag("v")
+                                    Text("D").tag("d")
+                                    Text("R").tag("r")
+                                    Text("T").tag("t")
+                                    Text("Space").tag("space")
+                                }
+                                .labelsHidden()
+                                .controlSize(.small)
+                            }
+                            .padding(.top, 8)
+                            .disabled(!appState.settings.toggleRecordingEnabled)
+                        }
+                        .opacity(appState.settings.toggleRecordingEnabled ? 1.0 : 0.3)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 20)
+                    .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .stroke(Color.primary.opacity(0.04), lineWidth: 1)
+                    )
+                    .overlay(alignment: .topTrailing) {
+                        Button {
+                            showToggleRecordingAlert = true
+                        } label: {
+                            Image(systemName: "power")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(appState.settings.toggleRecordingEnabled ? .white : Color(white: 0.55))
+                                .frame(width: 22, height: 22)
+                                .background(
+                                    Circle()
+                                        .fill(appState.settings.toggleRecordingEnabled ? Color.accentColor : Color(white: 0.25))
+                                )
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color(white: 0.12), lineWidth: 2)
+                                )
+                                .shadow(color: .black.opacity(0.3), radius: 4, y: 2)
+                        }
+                        .buttonStyle(.plain)
+                        .offset(x: 4, y: -8)
+                        .alert(
+                            appState.settings.toggleRecordingEnabled ? "Disable Toggle Recording?" : "Enable Toggle Recording?",
+                            isPresented: $showToggleRecordingAlert
+                        ) {
+                            Button("Cancel", role: .cancel) { }
+                            if appState.settings.toggleRecordingEnabled {
+                                Button("Disable", role: .destructive) {
+                                    appState.settings.toggleRecordingEnabled = false
+                                }
+                            } else {
+                                Button("Enable") {
+                                    appState.settings.toggleRecordingEnabled = true
+                                }
+                            }
+                        } message: {
+                            if appState.settings.toggleRecordingEnabled {
+                                Text("The \(toggleShortcutLabel) shortcut will stop responding until you re-enable it.")
+                            } else {
+                                Text("The \(toggleShortcutLabel) shortcut will start responding to key presses again.")
+                            }
+                        }
+                    }
                 }
             }
 
