@@ -8,6 +8,8 @@
 !assets/**
 !Handy.dmg
 !latest_version.json
+!docs/
+!docs/**
 !.github/
 !.github/**
 
