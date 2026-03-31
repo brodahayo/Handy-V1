@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
-  "download_url": "https://github.com/brodahayo/Handy/releases/latest/download/Handy.dmg",
-  "notes": "Initial release of Handy — voice-to-text for macOS."
+  "version": "2.0.1",
+  "download_url": "https://github.com/brodahayo/Handy-V1/releases/latest/download/Handy.dmg",
+  "notes": "Fix stuck spinner overlay, add Fn key watchdog, and 60s processing timeout."
 }
