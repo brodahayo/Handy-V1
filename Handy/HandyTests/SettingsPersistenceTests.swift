@@ -27,4 +27,17 @@ final class SettingsPersistenceTests: XCTestCase {
         XCTAssertEqual(settings.holdKey, .fn)
         XCTAssertEqual(settings.toggleModifier, "option")
     }
+
+    func testSaveAndLoadHotkeyEnableFlags() throws {
+        let persistence = SettingsPersistence(directory: testDir)
+        var settings = AppSettings()
+        settings.holdToDictateEnabled = false
+        settings.toggleRecordingEnabled = false
+
+        try persistence.save(settings)
+        let loaded = try persistence.load()
+
+        XCTAssertFalse(loaded.holdToDictateEnabled)
+        XCTAssertFalse(loaded.toggleRecordingEnabled)
+    }
 }
