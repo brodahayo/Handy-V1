@@ -14,21 +14,24 @@ final class HotkeyManager: @unchecked Sendable {
     var isConfigured: Bool { !monitors.isEmpty }
 
     /// Configure both Quick Dictation (hold) and Hands-Free (toggle) simultaneously.
-    /// Both modes are always active — hold key for quick dictation, toggle shortcut for hands-free.
-    func configure(holdKey: HoldKey, toggleModifier: String, toggleKey: String) {
+    /// Pass `holdEnabled: false` or `toggleEnabled: false` to skip installing those monitors.
+    func configure(holdKey: HoldKey, toggleModifier: String, toggleKey: String,
+                   holdEnabled: Bool = true, toggleEnabled: Bool = true) {
         tearDown()
 
-        print("[Handy] Configuring hotkeys — holdKey: \(holdKey), toggle: \(toggleModifier)+\(toggleKey)")
+        print("[Handy] Configuring hotkeys — holdKey: \(holdKey), toggle: \(toggleModifier)+\(toggleKey), holdEnabled: \(holdEnabled), toggleEnabled: \(toggleEnabled)")
 
-        // Always install the hold-key monitor
-        if holdKey == .fn {
-            installFnHoldMonitor()
-        } else {
-            installModifierHoldMonitor(holdKey: holdKey)
+        if holdEnabled {
+            if holdKey == .fn {
+                installFnHoldMonitor()
+            } else {
+                installModifierHoldMonitor(holdKey: holdKey)
+            }
         }
 
-        // Always install the toggle monitor alongside
-        installToggleMonitor(modifier: toggleModifier, key: toggleKey)
+        if toggleEnabled {
+            installToggleMonitor(modifier: toggleModifier, key: toggleKey)
+        }
 
         print("[Handy] Hotkey configured — \(monitors.count) monitors active")
     }
