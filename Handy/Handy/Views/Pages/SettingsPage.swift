@@ -30,6 +30,12 @@ struct SettingsPage: View {
     @State private var showHoldToggleAlert = false
     @State private var showToggleRecordingAlert = false
 
+    // Key recording state
+    enum RecordingTarget { case hold, toggle }
+    @State private var recordingTarget: RecordingTarget?
+    @State private var recordingMonitors: [Any] = []
+    @State private var pendingModifiers: UInt = 0
+
     var body: some View {
         VStack(spacing: 0) {
             // Capsule tab bar
@@ -171,7 +177,7 @@ struct SettingsPage: View {
 
             Section("Hotkeys") {
                 HStack(spacing: 10) {
-                    // Quick Dictation card — floating badge
+                    // Quick Dictation card — click to record
                     ZStack {
                         VStack(spacing: 0) {
                             Text("HOLD TO DICTATE")
@@ -180,27 +186,26 @@ struct SettingsPage: View {
                                 .tracking(0.8)
                                 .padding(.bottom, 12)
 
-                            Text(holdKeyLabel)
-                                .font(.system(size: 32, weight: .heavy, design: .rounded))
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        colors: [.primary, .primary.opacity(0.35)],
-                                        startPoint: .top,
-                                        endPoint: .bottom
+                            if recordingTarget == .hold {
+                                Text("Press a key...")
+                                    .font(.system(size: 20, weight: .semibold, design: .rounded))
+                                    .foregroundStyle(.secondary)
+                            } else {
+                                Text(holdKeyLabel)
+                                    .font(.system(size: 32, weight: .heavy, design: .rounded))
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            colors: [.primary, .primary.opacity(0.35)],
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        )
                                     )
-                                )
-
-                            Picker("", selection: $appState.settings.holdKey) {
-                                Text("Fn (Globe)").tag(HoldKey.fn)
-                                Text("Option (⌥)").tag(HoldKey.option)
-                                Text("⌥⇧").tag(HoldKey.optionShift)
-                                Text("Command (⌘)").tag(HoldKey.command)
-                                Text("Control (⌃)").tag(HoldKey.control)
                             }
-                            .labelsHidden()
-                            .controlSize(.small)
-                            .padding(.top, 8)
-                            .disabled(!appState.settings.holdToDictateEnabled)
+
+                            Text("Click to change")
+                                .font(.system(size: 11))
+                                .foregroundStyle(.tertiary)
+                                .padding(.top, 8)
                         }
                         .opacity(appState.settings.holdToDictateEnabled ? 1.0 : 0.3)
                     }
@@ -209,8 +214,17 @@ struct SettingsPage: View {
                     .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .stroke(Color.primary.opacity(0.04), lineWidth: 1)
+                            .stroke(recordingTarget == .hold ? Color.accentColor : Color.primary.opacity(0.04), lineWidth: recordingTarget == .hold ? 2 : 1)
                     )
+                    .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .onTapGesture {
+                        guard appState.settings.holdToDictateEnabled else { return }
+                        if recordingTarget == .hold {
+                            stopKeyRecording()
+                        } else {
+                            startKeyRecording(for: .hold)
+                        }
+                    }
                     .overlay(alignment: .topTrailing) {
                         Button {
                             showHoldToggleAlert = true
@@ -254,7 +268,7 @@ struct SettingsPage: View {
                         }
                     }
 
-                    // Hands-Free Toggle card — floating badge
+                    // Hands-Free Toggle card — click to record
                     ZStack {
                         VStack(spacing: 0) {
                             Text("TOGGLE RECORDING")
@@ -263,41 +277,26 @@ struct SettingsPage: View {
                                 .tracking(0.8)
                                 .padding(.bottom, 12)
 
-                            Text(toggleShortcutLabel)
-                                .font(.system(size: 32, weight: .heavy, design: .rounded))
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        colors: [.primary, .primary.opacity(0.35)],
-                                        startPoint: .top,
-                                        endPoint: .bottom
+                            if recordingTarget == .toggle {
+                                Text("Press a key...")
+                                    .font(.system(size: 20, weight: .semibold, design: .rounded))
+                                    .foregroundStyle(.secondary)
+                            } else {
+                                Text(toggleShortcutLabel)
+                                    .font(.system(size: 32, weight: .heavy, design: .rounded))
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            colors: [.primary, .primary.opacity(0.35)],
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        )
                                     )
-                                )
-
-                            HStack(spacing: 4) {
-                                Picker("", selection: $appState.settings.toggleModifier) {
-                                    Text("⌥").tag("option")
-                                    Text("⌘").tag("command")
-                                    Text("⌃").tag("control")
-                                }
-                                .labelsHidden()
-                                .controlSize(.small)
-
-                                Text("+")
-                                    .font(.caption)
-                                    .foregroundStyle(.quaternary)
-
-                                Picker("", selection: $appState.settings.toggleKey) {
-                                    Text("V").tag("v")
-                                    Text("D").tag("d")
-                                    Text("R").tag("r")
-                                    Text("T").tag("t")
-                                    Text("Space").tag("space")
-                                }
-                                .labelsHidden()
-                                .controlSize(.small)
                             }
-                            .padding(.top, 8)
-                            .disabled(!appState.settings.toggleRecordingEnabled)
+
+                            Text("Click to change")
+                                .font(.system(size: 11))
+                                .foregroundStyle(.tertiary)
+                                .padding(.top, 8)
                         }
                         .opacity(appState.settings.toggleRecordingEnabled ? 1.0 : 0.3)
                     }
@@ -306,8 +305,17 @@ struct SettingsPage: View {
                     .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .stroke(Color.primary.opacity(0.04), lineWidth: 1)
+                            .stroke(recordingTarget == .toggle ? Color.accentColor : Color.primary.opacity(0.04), lineWidth: recordingTarget == .toggle ? 2 : 1)
                     )
+                    .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .onTapGesture {
+                        guard appState.settings.toggleRecordingEnabled else { return }
+                        if recordingTarget == .toggle {
+                            stopKeyRecording()
+                        } else {
+                            startKeyRecording(for: .toggle)
+                        }
+                    }
                     .overlay(alignment: .topTrailing) {
                         Button {
                             showToggleRecordingAlert = true
@@ -512,23 +520,88 @@ struct SettingsPage: View {
     // MARK: - Helpers
 
     private var holdKeyLabel: String {
-        switch appState.settings.holdKey {
-        case .fn: "Fn"
-        case .option: "⌥"
-        case .optionShift: "⌥⇧"
-        case .command: "⌘"
-        case .control: "⌃"
+        let s = appState.settings
+        if s.holdKeyCode == 65535 {
+            return HotkeyManager.displayName(forModifierFlags: s.holdModifierFlags)
         }
+        let mods = HotkeyManager.displayName(forModifierFlags: s.holdModifierFlags)
+        let key = HotkeyManager.displayName(forKeyCode: s.holdKeyCode)
+        return mods == "None" ? key : "\(mods)\(key)"
     }
 
     private var toggleShortcutLabel: String {
-        let mod: String = switch appState.settings.toggleModifier {
-        case "option": "⌥"
-        case "command": "⌘"
-        case "control": "⌃"
-        default: "⌥"
+        let mods = HotkeyManager.displayName(forModifierFlags: appState.settings.toggleModifierFlags)
+        let key = HotkeyManager.displayName(forKeyCode: appState.settings.toggleKeyCode)
+        return mods.isEmpty || mods == "None" ? key : "\(mods)\(key)"
+    }
+
+    // MARK: - Key Recording
+
+    private func startKeyRecording(for target: RecordingTarget) {
+        stopKeyRecording()
+        recordingTarget = target
+        pendingModifiers = 0
+        appState.isRecordingHotkey = true
+
+        switch target {
+        case .hold:
+            // For hold: capture a non-alphabet key OR modifier keys
+            let keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [self] event in
+                if event.keyCode == 53 { // Escape cancels
+                    stopKeyRecording()
+                    return nil
+                }
+                // Reject alphabet keys — only allow Space, F-keys, arrows, etc.
+                guard !HotkeyManager.disallowedHoldKeyCodes.contains(event.keyCode) else {
+                    return nil // ignore, keep listening
+                }
+                let mods = event.modifierFlags.intersection(.deviceIndependentFlagsMask).rawValue
+                stopKeyRecording()
+                appState.settings.holdKeyCode = event.keyCode
+                appState.settings.holdModifierFlags = mods
+                return nil
+            }
+            let flagsMonitor = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { [self] event in
+                let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask).rawValue
+                if flags == 0 && pendingModifiers != 0 {
+                    // Released all modifiers — save as modifier-only hold
+                    let captured = pendingModifiers
+                    stopKeyRecording()
+                    appState.settings.holdKeyCode = 65535 // modifier-only
+                    appState.settings.holdModifierFlags = captured
+                } else if flags != 0 {
+                    pendingModifiers = flags
+                }
+                return nil
+            }
+            if let keyMonitor { recordingMonitors.append(keyMonitor) }
+            if let flagsMonitor { recordingMonitors.append(flagsMonitor) }
+
+        case .toggle:
+            // For toggle: capture first keyDown + modifiers
+            let keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [self] event in
+                if event.keyCode == 53 { // Escape
+                    stopKeyRecording()
+                    return nil
+                }
+                let mods = event.modifierFlags.intersection(.deviceIndependentFlagsMask).rawValue
+                stopKeyRecording()
+                appState.settings.toggleKeyCode = event.keyCode
+                appState.settings.toggleModifierFlags = mods
+                return nil // consume
+            }
+            if let keyMonitor { recordingMonitors.append(keyMonitor) }
         }
-        return "\(mod)\(appState.settings.toggleKey.uppercased())"
+    }
+
+    private func stopKeyRecording() {
+        for monitor in recordingMonitors {
+            NSEvent.removeMonitor(monitor)
+        }
+        recordingMonitors.removeAll()
+        recordingTarget = nil
+        pendingModifiers = 0
+        appState.isRecordingHotkey = false
     }
 
     private var profileInitials: String {

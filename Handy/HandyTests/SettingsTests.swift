@@ -4,9 +4,9 @@ import XCTest
 final class SettingsTests: XCTestCase {
     func testDefaultSettings() {
         let settings = AppSettings()
-        XCTAssertEqual(settings.holdKey, .fn)
-        XCTAssertEqual(settings.toggleModifier, "option")
-        XCTAssertEqual(settings.toggleKey, "v")
+        XCTAssertEqual(settings.holdModifierFlags, 8388608) // .function (Fn)
+        XCTAssertEqual(settings.toggleKeyCode, 9) // V
+        XCTAssertEqual(settings.toggleModifierFlags, 524288) // .option
         XCTAssertEqual(settings.cloudProvider, .groq)
         XCTAssertTrue(settings.cleanupEnabled)
         XCTAssertEqual(settings.cleanupStyle, .casual)
@@ -66,6 +66,37 @@ final class SettingsTests: XCTestCase {
         let decoded = try JSONDecoder().decode(AppSettings.self, from: oldJSON)
         XCTAssertTrue(decoded.holdToDictateEnabled)
         XCTAssertTrue(decoded.toggleRecordingEnabled)
+    }
+
+    func testBackwardCompatibility_migratesOldHotkeyFields() throws {
+        // Old format with holdKey/toggleModifier/toggleKey strings
+        let oldJSON = """
+        {"holdKey":"option","toggleModifier":"command","toggleKey":"d","cloudProvider":"groq",
+         "language":"auto","transcriptionMode":"cloud","localModelSize":"base",
+         "cleanupEnabled":true,"cleanupStyle":"casual","contextAware":true,
+         "overlayStyle":"mini","overlayPosition":"bottom_center",
+         "soundEnabled":true,"soundPack":"droplet","launchAtLogin":false,
+         "dailyGoal":500,"appearanceMode":"dark","hotkeyMode":"hold_fn"}
+        """.data(using: .utf8)!
+
+        let decoded = try JSONDecoder().decode(AppSettings.self, from: oldJSON)
+        XCTAssertEqual(decoded.holdModifierFlags, 524288)  // .option
+        XCTAssertEqual(decoded.toggleKeyCode, 2)            // D
+        XCTAssertEqual(decoded.toggleModifierFlags, 1048576) // .command
+    }
+
+    func testNewFormatEncodeDecode() throws {
+        var settings = AppSettings()
+        settings.holdModifierFlags = 262144  // .control
+        settings.toggleKeyCode = 49          // Space
+        settings.toggleModifierFlags = 524288 // .option
+
+        let data = try JSONEncoder().encode(settings)
+        let decoded = try JSONDecoder().decode(AppSettings.self, from: data)
+
+        XCTAssertEqual(decoded.holdModifierFlags, 262144)
+        XCTAssertEqual(decoded.toggleKeyCode, 49)
+        XCTAssertEqual(decoded.toggleModifierFlags, 524288)
     }
 
     func testCleanupPrompts() {

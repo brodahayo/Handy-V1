@@ -106,9 +106,12 @@ enum AppearanceMode: String, Codable, CaseIterable, Identifiable {
 
 struct AppSettings: Codable {
     var hotkeyMode: HotkeyMode = .holdFn // legacy, kept for Codable
-    var holdKey: HoldKey = .fn
-    var toggleModifier: String = "option"
-    var toggleKey: String = "v"
+    // Hold-to-dictate: supports modifier-only (holdKeyCode == 65535) or regular key + optional modifiers
+    var holdKeyCode: UInt16 = 65535 // 65535 = modifier-only mode
+    var holdModifierFlags: UInt = 8388608 // .function (Fn/Globe)
+    // Raw key code and modifier flags for toggle shortcut
+    var toggleKeyCode: UInt16 = 9 // V
+    var toggleModifierFlags: UInt = 524288 // .option
     var holdToDictateEnabled: Bool = true
     var toggleRecordingEnabled: Bool = true
 
@@ -137,9 +140,26 @@ struct AppSettings: Codable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         hotkeyMode = try container.decodeIfPresent(HotkeyMode.self, forKey: .hotkeyMode) ?? .holdFn
-        holdKey = try container.decodeIfPresent(HoldKey.self, forKey: .holdKey) ?? .fn
-        toggleModifier = try container.decodeIfPresent(String.self, forKey: .toggleModifier) ?? "option"
-        toggleKey = try container.decodeIfPresent(String.self, forKey: .toggleKey) ?? "v"
+
+        // Migrate from old holdKey/toggleModifier/toggleKey if new fields are missing
+        let legacy = try decoder.container(keyedBy: LegacyCodingKeys.self)
+        holdKeyCode = try container.decodeIfPresent(UInt16.self, forKey: .holdKeyCode) ?? 65535
+        if let flags = try container.decodeIfPresent(UInt.self, forKey: .holdModifierFlags) {
+            holdModifierFlags = flags
+        } else if let oldKey = try legacy.decodeIfPresent(HoldKey.self, forKey: .holdKey) {
+            holdModifierFlags = Self.migrateHoldKey(oldKey)
+        }
+        if let code = try container.decodeIfPresent(UInt16.self, forKey: .toggleKeyCode) {
+            toggleKeyCode = code
+        } else if let oldKey = try legacy.decodeIfPresent(String.self, forKey: .toggleKey) {
+            toggleKeyCode = Self.migrateToggleKey(oldKey)
+        }
+        if let flags = try container.decodeIfPresent(UInt.self, forKey: .toggleModifierFlags) {
+            toggleModifierFlags = flags
+        } else if let oldMod = try legacy.decodeIfPresent(String.self, forKey: .toggleModifier) {
+            toggleModifierFlags = Self.migrateToggleModifier(oldMod)
+        }
+
         holdToDictateEnabled = try container.decodeIfPresent(Bool.self, forKey: .holdToDictateEnabled) ?? true
         toggleRecordingEnabled = try container.decodeIfPresent(Bool.self, forKey: .toggleRecordingEnabled) ?? true
         cloudProvider = try container.decodeIfPresent(CloudProvider.self, forKey: .cloudProvider) ?? .groq
@@ -156,5 +176,42 @@ struct AppSettings: Codable {
         launchAtLogin = try container.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? false
         dailyGoal = try container.decodeIfPresent(Int.self, forKey: .dailyGoal) ?? 500
         appearanceMode = try container.decodeIfPresent(AppearanceMode.self, forKey: .appearanceMode) ?? .dark
+    }
+
+    // MARK: - Migration helpers (old enum/string fields → raw flags)
+
+    private static func migrateHoldKey(_ key: HoldKey) -> UInt {
+        switch key {
+        case .fn: return 8388608        // .function
+        case .option: return 524288     // .option
+        case .optionShift: return 655360 // .option | .shift
+        case .command: return 1048576   // .command
+        case .control: return 262144    // .control
+        }
+    }
+
+    private static func migrateToggleModifier(_ name: String) -> UInt {
+        switch name.lowercased() {
+        case "option", "alt": return 524288
+        case "command", "cmd": return 1048576
+        case "control", "ctrl": return 262144
+        default: return 524288
+        }
+    }
+
+    private static func migrateToggleKey(_ name: String) -> UInt16 {
+        switch name.lowercased() {
+        case "v": return 9
+        case "d": return 2
+        case "r": return 15
+        case "t": return 17
+        case "space": return 49
+        default: return 9
+        }
+    }
+
+    // Legacy keys used only for migration from old settings format
+    private enum LegacyCodingKeys: String, CodingKey {
+        case holdKey, toggleModifier, toggleKey
     }
 }

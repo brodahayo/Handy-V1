@@ -13,8 +13,8 @@ final class AppStateTests: XCTestCase {
 
     func testSettingsDefaultsLoaded() {
         let state = AppState()
-        XCTAssertEqual(state.settings.holdKey, .fn)
-        XCTAssertEqual(state.settings.toggleModifier, "option")
+        XCTAssertEqual(state.settings.holdModifierFlags, 8388608) // .function
+        XCTAssertEqual(state.settings.toggleModifierFlags, 524288) // .option
         XCTAssertEqual(state.settings.cloudProvider, .groq)
     }
 }

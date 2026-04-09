@@ -24,8 +24,8 @@ final class SettingsPersistenceTests: XCTestCase {
     func testLoadDefaultsWhenNoFile() throws {
         let persistence = SettingsPersistence(directory: testDir)
         let settings = try persistence.load()
-        XCTAssertEqual(settings.holdKey, .fn)
-        XCTAssertEqual(settings.toggleModifier, "option")
+        XCTAssertEqual(settings.holdModifierFlags, 8388608) // .function
+        XCTAssertEqual(settings.toggleModifierFlags, 524288) // .option
     }
 
     func testSaveAndLoadHotkeyEnableFlags() throws {

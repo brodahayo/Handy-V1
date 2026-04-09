@@ -22,6 +22,7 @@ final class AppState {
     var settings = AppSettings()
     var selectedPage: String? = "Home"
     var showOnboarding = !UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+    var isRecordingHotkey = false
     var isMeetingRecording = false
     var isMeetingProcessing = false
     var meetingAudioLevel: Float = 0.0

@@ -49,11 +49,15 @@ struct HandyApp: App {
                         configureHotkeys()
                         soundPlayer.preload(pack: appState.settings.soundPack)
                     }
-                    .onChange(of: appState.settings.holdKey) { configureHotkeys() }
-                    .onChange(of: appState.settings.toggleModifier) { configureHotkeys() }
-                    .onChange(of: appState.settings.toggleKey) { configureHotkeys() }
+                    .onChange(of: appState.settings.holdKeyCode) { configureHotkeys() }
+                    .onChange(of: appState.settings.holdModifierFlags) { configureHotkeys() }
+                    .onChange(of: appState.settings.toggleKeyCode) { configureHotkeys() }
+                    .onChange(of: appState.settings.toggleModifierFlags) { configureHotkeys() }
                     .onChange(of: appState.settings.holdToDictateEnabled) { configureHotkeys() }
                     .onChange(of: appState.settings.toggleRecordingEnabled) { configureHotkeys() }
+                    .onChange(of: appState.isRecordingHotkey) { _, recording in
+                        hotkeyManager.isPaused = recording
+                    }
             }
         }
         .defaultSize(width: 700, height: 500)
@@ -248,7 +252,9 @@ struct HandyApp: App {
     }
 
     private func configureHotkeys() {
-        print("[Handy] configureHotkeys() called — holdKey: \(appState.settings.holdKey), toggle: \(appState.settings.toggleModifier)+\(appState.settings.toggleKey)")
+        let holdDisplay = HotkeyManager.displayName(forModifierFlags: appState.settings.holdModifierFlags)
+        let toggleDisplay = HotkeyManager.displayName(forModifierFlags: appState.settings.toggleModifierFlags) + HotkeyManager.displayName(forKeyCode: appState.settings.toggleKeyCode)
+        print("[Handy] configureHotkeys() called — hold: \(holdDisplay), toggle: \(toggleDisplay)")
         hotkeyManager.onRecordingStart = { [self] in
             MainActor.assumeIsolated {
                 print("[Handy] onRecordingStart callback fired")
@@ -266,9 +272,10 @@ struct HandyApp: App {
             }
         }
         hotkeyManager.configure(
-            holdKey: appState.settings.holdKey,
-            toggleModifier: appState.settings.toggleModifier,
-            toggleKey: appState.settings.toggleKey,
+            holdKeyCode: appState.settings.holdKeyCode,
+            holdModifierFlags: appState.settings.holdModifierFlags,
+            toggleKeyCode: appState.settings.toggleKeyCode,
+            toggleModifierFlags: appState.settings.toggleModifierFlags,
             holdEnabled: appState.settings.holdToDictateEnabled,
             toggleEnabled: appState.settings.toggleRecordingEnabled
         )
@@ -297,9 +304,10 @@ struct HandyApp: App {
                     accessibilityTimer?.invalidate()
                     accessibilityTimer = nil
                     hotkeyManager.configure(
-                        holdKey: appState.settings.holdKey,
-                        toggleModifier: appState.settings.toggleModifier,
-                        toggleKey: appState.settings.toggleKey,
+                        holdKeyCode: appState.settings.holdKeyCode,
+                        holdModifierFlags: appState.settings.holdModifierFlags,
+                        toggleKeyCode: appState.settings.toggleKeyCode,
+                        toggleModifierFlags: appState.settings.toggleModifierFlags,
                         holdEnabled: appState.settings.holdToDictateEnabled,
                         toggleEnabled: appState.settings.toggleRecordingEnabled
                     )
