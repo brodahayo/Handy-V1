@@ -1,5 +1,5 @@
 {
-  "version": "2.1.0",
+  "version": "2.2.0",
   "download_url": "https://github.com/brodahayo/Handy-V1/releases/latest/download/Handy.dmg",
-  "notes": "Add hotkey power toggle — independently enable/disable Hold to Dictate and Toggle Recording with floating badge buttons and confirmation dialogs."
+  "notes": "Custom hotkey recording — click any hotkey card and press the key you want to set it."
 }
