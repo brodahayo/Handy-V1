@@ -12,9 +12,11 @@
 !docs/**
 !.github/
 !.github/**
+
+# Allow only the built DMG inside Handy/
 !Handy/
-!Handy/**
-Handy/1/
+!Handy/build_dmg/
+!Handy/build_dmg/Handy.dmg
 
 # Always ignore
 .DS_Store
